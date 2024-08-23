@@ -1,0 +1,39 @@
+@for (item of menus; track $index) {
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="seleccionMenu(item)">
+        <div class="bg-body-tertiary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+          <div class="my-3 p-3">
+            <h2 class="display-5">{{item.name}}</h2>
+            <p class="lead">Another headline</p>
+          </div>
+          <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+            <img src="./assets/menus/bibimbap.png" alt="">
+          </div>
+        </div>
+    </div>
+}
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Menú seleccionado</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <h5>El menú que seleccionaste es: </h5>
+          <h1><code>{{menuSeleccionado.name}}</code></h1>
+          
+        </div>
+        <div class="p-3">
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-success" type="button" data-bs-dismiss="modal" (click)="confirmarPedido()">Sí</button>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+

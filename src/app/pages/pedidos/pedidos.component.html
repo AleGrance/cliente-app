@@ -1,0 +1,94 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Los pedidos del día</h5>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Solicita</th>
+                  <th scope="col">Menú</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">...</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (pedido of pedidos; track $index) {
+                  <tr>
+                    <th scope="row">{{pedido.pedidoId}}</th>
+                    <td>{{pedido.userRelated.name}}</td>
+                    <td>{{pedido.menuRelated.name}}</td>
+                    <td>
+                    <span [classList]="pedido.estadoRelated.class">{{pedido.estadoRelated.name}}</span>
+                    </td>
+                    <td>
+                      <div class="dropdown">
+                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Cambiar estado
+                        </button>
+                        <ul class="dropdown-menu">
+                          @for (estado of estados; track $index) {
+                            <li><a class="dropdown-item" (click)="changeEstado(pedido.pedidoId, estado.estadoId)">{{estado.name}}</a></li>
+                          }
+                        </ul>
+                      </div>
+
+                      <!-- <ng-select 
+                        [(ngModel)]="estadoSeleccionado"
+                        (clear)="clearResetTable()"
+                        (change)="changeEstados()"
+                        placeholder="Cambiar estado"
+                        >
+                        @for (item of estados; track $index) {
+                          <ng-option [value]="item.estadoId">{{item.name}}</ng-option>
+                        }
+                      </ng-select> -->
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Cantidades por plato</h5>
+              <div class="table-responsive">
+        <table class="table">
+            <thead>
+              <tr>
+                <th class="text-end" scope="col">Menús</th>
+                <th scope="col">Totales</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of menusHabilitados; track $index) {
+                <tr>
+                    <td class="text-end">{{item.name}}</td>
+                    <td>
+                        <span class="badge rounded-pill text-bg-success">{{item.cantidad}}</span>
+                    </td>
+                </tr>
+              }
+            </tbody>
+        </table>
+        
+        </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
