@@ -7,7 +7,7 @@ export interface Pedido {
   estadoId: number;
 
   userRelated: {
-    name: string;
+    userName: string;
   };
   menuRelated: {
     name: string;

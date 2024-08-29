@@ -19,7 +19,7 @@
                 @for (pedido of pedidos; track $index) {
                   <tr>
                     <th scope="row">{{pedido.pedidoId}}</th>
-                    <td>{{pedido.userRelated.name}}</td>
+                    <td>{{pedido.userRelated.userName}}</td>
                     <td>{{pedido.menuRelated.name}}</td>
                     <td>
                     <span [classList]="pedido.estadoRelated.class">{{pedido.estadoRelated.name}}</span>

@@ -1,0 +1,258 @@
+<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+	<li [ngbNavItem]="1">
+		<button ngbNavLink>Usuarios</button>
+		<ng-template ngbNavContent>
+
+			<div class="px-3 py-2">
+				<div class="container d-flex flex-wrap justify-content-center">
+				  <form class="col-4 mb-2 mb-lg-0 me-lg-auto" role="search">
+					<ng-select 
+						[(ngModel)]="usuarioSeleccionadoId"
+						placeholder="Buscar usuario..."
+						name="usuarioSeleccionadoId"
+						(change)="seleccionarUsuario()"
+						>
+						@for (item of usuarios; track $index) {
+							<ng-option [value]="item.userId">{{item.userName}}</ng-option>
+						}
+					</ng-select>
+				  </form>
+		  
+				  <div class="text-end">
+					<button type="button" class="btn btn-outline-info btn-sm" (click)="openModalNuevoUsuario(nuevoUsuario)">Nuevo Usuario</button>
+				  </div>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-sm table-striped" style="font-size: small;">
+							<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Nombre</th>
+								<th scope="col">CI</th>
+								<th scope="col">Rol</th>
+								<th>...</th>
+							</tr>
+							</thead>
+							<tbody>
+							@for (item of usuariosFiltrados; track $index) {
+								<tr>
+									<th scope="row">{{ item.userId }}</th>
+									<td>{{ item.userName }}</td>
+									<td>{{ item.documento }}</td>
+									<td>{{ item.roleRelated?.name }}</td>
+									<td>
+										<button type="button" class="btn btn-outline-info btn-sm" (click)="openModalModificarUsuario(modificarUsuario, item)">Editar</button>
+									</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+		</ng-template>
+	</li>
+
+	<li [ngbNavItem]="2">
+		<button ngbNavLink>Pedidos</button>
+		<ng-template ngbNavContent>
+
+			<div class="px-3 py-2">
+				<div class="container d-flex flex-wrap justify-content-center">
+				  
+		  
+				  <div class="text-end">
+					<button type="button" class="btn btn-outline-info btn-sm">Descargar listado</button>
+				  </div>
+				</div>
+			</div>
+
+			<div class="card">
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-sm table-striped" style="font-size: small;">
+							<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Fecha</th>
+								<th scope="col">Usuario</th>
+								<th scope="col">Menú</th>
+								<th scope="col">Estado</th>
+							</tr>
+							</thead>
+							<tbody>
+							@for (pedido of pedidos; track $index) {
+								<tr>
+									<th scope="row">{{ pedido.pedidoId }}</th>
+									<td>{{ pedido.fechaPedido | date : 'dd-MM-yyyy' }}</td>
+									<td>{{ pedido.userRelated.userName }}</td>
+									<td>{{ pedido.menuRelated.name }}</td>
+									<td>
+										<span [classList]="pedido.estadoRelated.class">{{pedido.estadoRelated.name}}</span>
+									</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+		</ng-template>
+	</li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+<!-- <pre>Active: {{ active }}</pre> -->
+
+
+<!-- Nuevos modales -->
+<!-- Modal - Crear Usuario -->
+<ng-template #nuevoUsuario let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Nuevo usuario</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		
+		<form [formGroup]="usuarioNuevoForm" class="needs-validation">
+			<div class="mb-3">
+				<label for="userName" class="form-label">Nombre</label>
+				<input type="text" class="form-control" id="userName" formControlName="userName" required placeholder="Escriba el nombre">
+				
+				@if (usuarioNuevoForm.get('userName')?.invalid && (usuarioNuevoForm.get('userName')?.dirty || usuarioNuevoForm.get('userName')?.touched)) {
+					<code>Este campo es requerido.</code>
+				}
+				
+			</div>
+			<div class="mb-3">
+				<label for="documento" class="form-label">Número de CI</label>
+				<input type="text" class="form-control" id="documento" formControlName="documento" required placeholder="Escriba el CI">
+
+				@if (usuarioNuevoForm.get('documento')?.invalid && (usuarioNuevoForm.get('documento')?.dirty || usuarioNuevoForm.get('documento')?.touched)) {
+					<code>Este campo es requerido.</code>
+				}
+
+			</div>
+			<div class="mb-3">
+				<label for="password" class="form-label">Password</label>
+				<input type="password" class="form-control" id="password" formControlName="password" required placeholder="Escriba la contraseña">
+
+				@if (usuarioNuevoForm.get('password')?.invalid && (usuarioNuevoForm.get('password')?.dirty || usuarioNuevoForm.get('password')?.touched)) {
+					@if (usuarioNuevoForm.get('password')?.errors?.['required']) {
+						<code>Este campo es requerido.</code>
+					}
+
+					@if (usuarioNuevoForm.get('password')?.errors?.['minlength'] || usuarioNuevoForm.get('password')?.errors?.['passwordStrength']) {
+						<code>El campo password debe tener al menos 4 caracteres y 1 número.</code>
+					}
+				}
+
+			</div>
+			<div class="mb-3">
+				<label for="rol" class="form-label">Rol</label>
+				<ng-select 
+					id="roleId"
+					formControlName="roleId"
+					required
+					placeholder="Escriba el nombre de un rol"
+					>
+					@for (item of roles; track $index) {
+						<ng-option [value]="item.roleId">{{item.name}}</ng-option>
+					}
+				</ng-select>
+
+				@if (usuarioNuevoForm.get('roleId')?.invalid && (usuarioNuevoForm.get('roleId')?.dirty || usuarioNuevoForm.get('roleId')?.touched)) {
+					@if (usuarioNuevoForm.get('roleId')?.errors?.['required']) {
+						<code>Este campo es requerido.</code>
+					}
+				}
+			</div>
+		</form>
+
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-info btn-sm" (click)="validarUsuarioForm()">Guardar</button>
+	</div>
+</ng-template>
+
+<!-- Modal - Modificar Usuario -->
+<ng-template #modificarUsuario let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Modificar usuario</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		
+		<form [formGroup]="usuarioModificadoForm" class="needs-validation">
+			<div class="mb-3">
+				<label for="userName" class="form-label">Nombre</label>
+				<input type="text" class="form-control" id="userName" formControlName="userName" required placeholder="Escriba el nombre">
+				
+				@if (usuarioModificadoForm.get('userName')?.invalid && (usuarioModificadoForm.get('userName')?.dirty || usuarioModificadoForm.get('userName')?.touched)) {
+					<code>Este campo es requerido.</code>
+				}
+				
+			</div>
+			<div class="mb-3">
+				<label for="documento" class="form-label">Código de vendedor</label>
+				<input type="text" class="form-control" id="documento" formControlName="documento" placeholder="Escriba el CI">
+
+				@if (usuarioModificadoForm.get('documento')?.invalid && (usuarioModificadoForm.get('documento')?.dirty || usuarioModificadoForm.get('documento')?.touched)) {
+					@if (usuarioModificadoForm.get('documento')?.errors?.['required']) {
+						<code>Este campo es requerido.</code>
+					}
+				}
+
+			</div>
+			<div class="mb-3">
+				<label for="password" class="form-label">Password</label>
+				<input type="password" class="form-control" id="password" formControlName="password" placeholder="Escriba la contraseña nueva si desea cambiarla">
+
+				@if (usuarioModificadoForm.get('password')?.invalid && (usuarioModificadoForm.get('password')?.dirty || usuarioModificadoForm.get('password')?.touched)) {
+					@if (usuarioModificadoForm.get('password')?.errors?.['required']) {
+						<code>Este campo es requerido.</code>
+					}
+
+					@if (usuarioModificadoForm.get('password')?.errors?.['minlength'] || usuarioModificadoForm.get('password')?.errors?.['passwordStrength']) {
+						<code>El campo password debe tener al menos 4 caracteres y 1 número.</code>
+					}
+				}
+
+			</div>
+			<div class="mb-3">
+				<label for="rol" class="form-label">Rol</label>
+				<ng-select 
+					id="roleId"
+					formControlName="roleId"
+					required
+					placeholder="Escriba el nombre de un rol"
+					>
+					@for (item of roles; track $index) {
+						<ng-option [value]="item.roleId">{{item.name}}</ng-option>
+					}
+				</ng-select>
+
+				@if (usuarioModificadoForm.get('roleId')?.invalid && (usuarioModificadoForm.get('roleId')?.dirty || usuarioModificadoForm.get('roleId')?.touched)) {
+					@if (usuarioModificadoForm.get('roleId')?.errors?.['required']) {
+						<code>Este campo es requerido.</code>
+					}
+				}
+			</div>
+		</form>
+
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-info btn-sm" (click)="validarUsuarioModificadoForm()">Guardar</button>
+	</div>
+</ng-template>
+
+
